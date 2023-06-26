@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Audio Recorder</title>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                var recording = false;
+
+                $("#recordButton").mousedown(function() {
+                    if (!recording) {
+                        $(this).addClass("active");  // Add 'active' class to indicate button is pressed
+                        $.post("/start_recording", function(data) {
+                            console.log(data.message);
+                        });
+                        recording = true;
+                    }
+                });
+
+                $("#recordButton").mouseup(function() {
+                    if (recording) {
+                        $(this).removeClass("active");  // Remove 'active' class when button is released
+                        $.post("/stop_recording", function(data) {
+                            console.log(data.message);
+                        });
+            recording = false;
+            }
+            });
+
+            setInterval(function() {
+            $.get("/get_text", function(data) {
+            $("#outputContainer").html(data.replace(/\n/g, "<br>"));
+            $("#outputContainer").scrollTop($("#outputContainer")[0].scrollHeight);
+            });
+            }, 1000);
+            });
+        </script>
+        <style>
+            body {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                margin: 0;
+                background-color: #f1f1f1;
+                font-family: Arial, sans-serif;
+            }
+
+            #container {
+                text-align: center;
+            }
+
+            h1 {
+                margin-bottom: 20px;
+            }
+
+            #recordButton {
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 10px;
+                cursor: pointer;
+                border-radius: 4px;
+            }
+
+            #recordButton.active {
+                background-color: #45A049;  /* Update the color to indicate the pressed state */
+            }
+
+            #outputContainer {
+                height: 300px;
+                width: 400px;
+                overflow-y: scroll;
+                border: 1px solid #ccc;
+                padding: 10px;
+                margin-top: 20px;
+                background-color: #fff;
+                text-align: left;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container">
+            <h1>Audio Recorder</h1>
+            <button id="recordButton">Record</button>
+            <div id="outputContainer"></div>
+        </div>
+    </body>
+</html>
