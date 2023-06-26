@@ -1,2 +1,3 @@
-# final-dataai-hackathon
-Final DataAI hackathon
+# ChatBot Vocalizer
+
+This Framework allows us to provide a vocal interface to prompt-based LLMs.
