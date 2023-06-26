@@ -14,18 +14,22 @@ RECORD_SECONDS = 5
 
 ARECORD_POPEN = None
 
+from audio2text import audio_file_to_text
+
 def record_audio_arecord(ofile):
     global ARECORD_POPEN
     if ARECORD_POPEN is None:
         cmd = f"arecord -d 10 -f cd -t wav -D default {ofile}"
         ARECORD_POPEN = subprocess.Popen(cmd.split(" "))
 
-def stop_recording():
+def stop_recording(ifile):
     global ARECORD_POPEN
     if ARECORD_POPEN is not None:
         subprocess.Popen.kill(ARECORD_POPEN)
-        subprocess.call("python audio2text.py".split(" "))
+        transcript = audio_file_to_text(ifile)
         ARECORD_POPEN = None
+
+        return transcript
 
 def on_press(key):
     if key == keyboard.Key.esc:
@@ -38,7 +42,8 @@ def on_press(key):
     if k == 'r':
         record_audio_arecord("o.wav")
     if k == 's':
-       stop_recording() 
+       transcript = stop_recording("o.wav")
+       print(f"transcript: {transcript}")
 
 def main(argv):
     if len(argv) > 1 and argv[1] == "help":
