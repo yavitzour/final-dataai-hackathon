@@ -22,14 +22,31 @@ def record_audio_arecord(ofile):
         cmd = f"arecord -d 10 -f cd -t wav -D default {ofile}"
         ARECORD_POPEN = subprocess.Popen(cmd.split(" "))
 
-def stop_recording(ifile):
+def stop_recording(audio_file, log_file):
     global ARECORD_POPEN
     if ARECORD_POPEN is not None:
         subprocess.Popen.kill(ARECORD_POPEN)
-        transcript = audio_file_to_text(ifile)
+        transcript = audio_file_to_text(audio_file)
         ARECORD_POPEN = None
+        with open(log_file, 'a') as of:
+            of.write(f"You: {transcript}")
 
         return transcript
+
+"""
+question = stop_recording("o.wav", "app.log")
+
+answer = query_dolly(question, "app.log")
+"""
+
+def query_dolly(prompt, log_file):
+    # query dolly
+    answer = "placeholder"
+
+    with open(log_file, 'a') as lf:
+        lf.write(f"Dolly: {answer}")
+
+    return answer
 
 def on_press(key):
     if key == keyboard.Key.esc:
