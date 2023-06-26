@@ -15,7 +15,6 @@ RECORD_SECONDS = 5
 ARECORD_POPEN = None
 
 from .audio2text import audio_file_to_text
-from .rest_api import client
 
 def record_audio_arecord(ofile):
     global ARECORD_POPEN
@@ -30,7 +29,7 @@ def stop_recording(audio_file, log_file):
         transcript = audio_file_to_text(audio_file)
         ARECORD_POPEN = None
         with open(log_file, 'a') as of:
-            of.write(f"You: {transcript}\n")
+            of.write(f">>> You: {transcript.capitalize()}\n")
 
         return transcript
 
@@ -45,7 +44,7 @@ def query_llm(client, prompt, log_file):
     answer = client.query_dolly(prompt) 
 
     with open(log_file, 'a') as lf:
-        lf.write(f"{client.name}: {answer}")
+        lf.write(f"<<< {client.name}: {answer}\n")
 
     return answer
 
