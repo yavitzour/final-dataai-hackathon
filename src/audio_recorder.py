@@ -21,8 +21,11 @@ def record_audio_arecord(ofile):
         ARECORD_POPEN = subprocess.Popen(cmd.split(" "))
 
 def stop_recording():
+    global ARECORD_POPEN
     if ARECORD_POPEN is not None:
         subprocess.Popen.kill(ARECORD_POPEN)
+        subprocess.call("python audio2text.py".split(" "))
+        ARECORD_POPEN = None
 
 def on_press(key):
     if key == keyboard.Key.esc:
