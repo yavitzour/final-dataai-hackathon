@@ -1,4 +1,6 @@
 import pyaudio
+from pynput import keyboard
+import subprocess
 import sys
 import wave
 #use 16Khz
@@ -10,40 +12,44 @@ RATE = 44100
 CHUNK = 2048
 RECORD_SECONDS = 5
 
-def record_audio(device, ifile, recording_seconds):
-   p = pyaudio.PyAudio()
+ARECORD_POPEN = None
 
-   stream = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True,\
-                   frames_per_buffer=CHUNK)
-   frames = []
+def record_audio_arecord(ofile):
+    global ARECORD_POPEN
+    if ARECORD_POPEN is None:
+        cmd = f"arecord -d 10 -f cd -t wav -D default {ofile}"
+        ARECORD_POPEN = subprocess.Popen(cmd.split(" "))
 
-   for _ in range(0, int(RATE / CHUNK * recording_seconds)):
-       data = stream.read(CHUNK)
-       frames.append(data)
+def stop_recording():
+    global ARECORD_POPEN
+    if ARECORD_POPEN is not None:
+        subprocess.Popen.kill(ARECORD_POPEN)
+        subprocess.call("python audio2text.py".split(" "))
+        ARECORD_POPEN = None
 
-   stream.stop_stream()
-   stream.close()
-   p.terminate()
-   
-   wf = wave.open(ifile, 'wb')
-   wf.setnchannels(CHANNELS)
-   wf.setsampwidth(p.get_sample_size(FORMAT))
-   wf.setframerate(RATE)
-   wf.writeframes(b''.join(frames))
-   wf.close()
+def on_press(key):
+    if key == keyboard.Key.esc:
+        return False  # stop listener
+    try:
+        k = key.char  # single-char keys
+    except:
+        k = key.name  # other keys
 
+    if k == 'r':
+        record_audio_arecord("o.wav")
+    if k == 's':
+       stop_recording() 
 
 def main(argv):
-    if argv[1] == "help":
-        print(f"usage: {argv[0]} <device_idx> <wav_file_name> <length of recording in seconds>")
-        print("example: python3 audio_recorder.py 12 out.wav 5")
+    if len(argv) > 1 and argv[1] == "help":
+        print(f"usage: {argv[0]} <wav_file_name>")
+        print("example: python3 audio_recorder.py out.wav ")
         exit(0)
 
-    device = argv[1]
-    wav_file = argv[2]
-    recording_seconds = int(argv[3])
+    listener = keyboard.Listener(on_press=on_press)
+    listener.start()  # start to listen on a separate thread
+    listener.join()  # remove if main thread is polling self.keys
 
-    record_audio(device, wav_file, recording_seconds)
 
 if __name__ == "__main__":
     main(sys.argv)
