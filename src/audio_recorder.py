@@ -14,7 +14,7 @@ RECORD_SECONDS = 5
 
 ARECORD_POPEN = None
 
-from audio2text import audio_file_to_text
+from .audio2text import audio_file_to_text
 
 def record_audio_arecord(ofile):
     global ARECORD_POPEN
@@ -29,7 +29,7 @@ def stop_recording(audio_file, log_file):
         transcript = audio_file_to_text(audio_file)
         ARECORD_POPEN = None
         with open(log_file, 'a') as of:
-            of.write(f"You: {transcript}")
+            of.write(f"You: {transcript}\n")
 
         return transcript
 
