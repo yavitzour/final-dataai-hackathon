@@ -6,30 +6,31 @@ import wave
 
 FORMAT = 8
 CHANNELS = 1
-RATE =  1600
-CHUNK = 1024
+RATE = 44100 
+CHUNK = 2048
 RECORD_SECONDS = 5
 
-def record_audio(device, file, recording_seconds):
-    with wave.open(file, 'wb') as wf:
-        p = pyaudio.PyAudio()
+def record_audio(device, ifile, recording_seconds):
+   p = pyaudio.PyAudio()
 
-        stream = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True,\
-                        frames_per_buffer=CHUNK, input_device_index=int(device))
-        frames = []
+   stream = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True,\
+                   frames_per_buffer=CHUNK)
+   frames = []
 
-        for _ in range(0, int(RATE / CHUNK * recording_seconds)):
-            data = stream.read(CHUNK)
-            frames.append(data)
+   for _ in range(0, int(RATE / CHUNK * recording_seconds)):
+       data = stream.read(CHUNK)
+       frames.append(data)
 
-        stream.stop_stream()
-        stream.close()
-        p.terminate()
-        
-        wf.setnchannels(CHANNELS)
-        wf.setsampwidth(p.get_sample_size(FORMAT))
-        wf.setframerate(RATE)
-        wf.writeframes(b''.join(frames))
+   stream.stop_stream()
+   stream.close()
+   p.terminate()
+   
+   wf = wave.open(ifile, 'wb')
+   wf.setnchannels(CHANNELS)
+   wf.setsampwidth(p.get_sample_size(FORMAT))
+   wf.setframerate(RATE)
+   wf.writeframes(b''.join(frames))
+   wf.close()
 
 
 def main(argv):
