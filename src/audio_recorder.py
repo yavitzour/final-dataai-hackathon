@@ -48,6 +48,7 @@ def query_dolly(prompt, log_file):
 
     return answer
 
+
 def on_press(key):
     if key == keyboard.Key.esc:
         return False  # stop listener
@@ -59,7 +60,7 @@ def on_press(key):
     if k == 'r':
         record_audio_arecord("o.wav")
     if k == 's':
-       transcript = stop_recording("o.wav")
+       transcript = stop_recording("o.wav", "/tmp/app.log")
        print(f"transcript: {transcript}")
 
 def main(argv):
