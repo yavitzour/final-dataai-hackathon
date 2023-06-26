@@ -15,6 +15,7 @@ RECORD_SECONDS = 5
 ARECORD_POPEN = None
 
 from .audio2text import audio_file_to_text
+from .rest_api import client
 
 def record_audio_arecord(ofile):
     global ARECORD_POPEN
@@ -41,7 +42,7 @@ answer = query_dolly(question, "app.log")
 
 def query_dolly(prompt, log_file):
     # query dolly
-    answer = "placeholder"
+    answer = client.query_dolly(prompt) 
 
     with open(log_file, 'a') as lf:
         lf.write(f"Dolly: {answer}")
