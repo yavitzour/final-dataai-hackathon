@@ -4,6 +4,9 @@ import librosa
 import torch
 from transformers import Wav2Vec2ForCTC, Wav2Vec2Tokenizer
 
+#arecord -d 10 -f cd -t wav -D copy foobar.wav
+
+
 def main():
     tokenizer = Wav2Vec2Tokenizer.from_pretrained("facebook/wav2vec2-base-960h")
     model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-base-960h")
