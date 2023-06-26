@@ -4,7 +4,7 @@ import librosa
 import torch
 from transformers import Wav2Vec2ForCTC, Wav2Vec2Tokenizer
 
-def main(ifile):
+def audio_file_to_text(ifile):
     tokenizer = Wav2Vec2Tokenizer.from_pretrained("facebook/wav2vec2-base-960h")
     model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-base-960h")
 
@@ -18,4 +18,4 @@ def main(ifile):
 
 
 if __name__ == '__main__':
-    main("/tmp/o.wav")
+    print(audio_file_to_text("/tmp/o.wav"))
