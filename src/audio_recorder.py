@@ -37,15 +37,15 @@ def stop_recording(audio_file, log_file):
 """
 question = stop_recording("o.wav", "app.log")
 
-answer = query_dolly(question, "app.log")
+answer = query_llm(client, question, "app.log")
 """
 
-def query_dolly(prompt, log_file):
+def query_llm(client, prompt, log_file):
     # query dolly
     answer = client.query_dolly(prompt) 
 
     with open(log_file, 'a') as lf:
-        lf.write(f"Dolly: {answer}")
+        lf.write(f"{client.name}: {answer}")
 
     return answer
 
