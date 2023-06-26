@@ -1,10 +1,14 @@
 import socket
 
-host = socket.gethostname()  # as both code is running on same pc
-port = 5000  # socket server port number
 
-client_socket = socket.socket()  # instantiate
-client_socket.connect((host, port))  # connect to the server
+host = socket.gethostname()  # as both code is running on same pc
+port = 5000
+client_socket = None
+
+
+def init_client():
+    client_socket = socket.socket()  # instantiate
+    client_socket.connect((host, port))  # connect to the server
 
 
 def query_dolly(prompt):
@@ -14,7 +18,8 @@ def query_dolly(prompt):
     return data
 
 def client_program():
-
+    
+    init_client()
     message = input(" -> ")  # take input
 
     while message.lower().strip() != 'bye':
